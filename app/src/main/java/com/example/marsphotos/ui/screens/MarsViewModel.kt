@@ -20,6 +20,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.marsphotos.data.MarsPhotosRepository
+import com.example.marsphotos.data.NetworkMarsPhotosRepository
 import com.example.marsphotos.model.MarsPhoto
 import com.example.marsphotos.network.MarsApi
 import kotlinx.coroutines.launch
@@ -55,7 +57,21 @@ class MarsViewModel : ViewModel() {
         viewModelScope.launch {
             marsUiState = MarsUiState.Loading
             marsUiState = try {
-                val listResult = MarsApi.retrofitService.getPhotos()
+                ///val listResult = MarsApi.retrofitService.getPhotos()
+
+                /*
+                you need to update the ViewModel code to use the repository to get the data as
+                Android best practices suggest.
+                 */
+
+                /*
+                 *Instead of the ViewModel directly making the network request for the data, the repository
+                 *provides the data. The ViewModel no longer directly references the MarsApi code.
+                 */
+
+                val marsPhotosRepository= NetworkMarsPhotosRepository()
+                val listResult = marsPhotosRepository.getMarsPhotos()
+
                 MarsUiState.Success(
                     "Success: ${listResult.size} Mars photos retrieved"
                 )
