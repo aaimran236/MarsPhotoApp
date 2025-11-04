@@ -26,7 +26,6 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.marsphotos.MarsPhotosApplication
 import com.example.marsphotos.data.MarsPhotosRepository
-import com.example.marsphotos.data.NetworkMarsPhotosRepository
 import com.example.marsphotos.model.MarsPhoto
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -41,6 +40,10 @@ sealed interface MarsUiState {
     object Loading : MarsUiState
 }
 
+    /*
+     * The value for the constructor parameter comes from the application container because
+     * the app is now using dependency injection.
+    */
 class MarsViewModel(private val marsPhotosRepository: MarsPhotosRepository) : ViewModel() {
     /** The mutable State that stores the status of the most recent request */
     var marsUiState: MarsUiState by mutableStateOf(MarsUiState.Loading)
@@ -64,13 +67,14 @@ class MarsViewModel(private val marsPhotosRepository: MarsPhotosRepository) : Vi
                 ///val listResult = MarsApi.retrofitService.getPhotos()
 
                 /*
-                you need to update the ViewModel code to use the repository to get the data as
-                Android best practices suggest.
+                you need to update the ViewModel code to use the repository to get the
+                data as Android best practices suggest.
                  */
 
                 /*
-                 *Instead of the ViewModel directly making the network request for the data, the repository
-                 *provides the data. The ViewModel no longer directly references the MarsApi code.
+                 * Instead of the ViewModel directly making the network request for the
+                 * data, the repository provides the data. The ViewModel no longer directly
+                 * references the MarsApi code.
                  */
 
                 ///val marsPhotosRepository= NetworkMarsPhotosRepository()
@@ -87,13 +91,29 @@ class MarsViewModel(private val marsPhotosRepository: MarsPhotosRepository) : Vi
         }
     }
 
-    companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application = (this[APPLICATION_KEY] as MarsPhotosApplication)
-                val marsPhotosRepository = application.container.marsPhotosRepository
-                MarsViewModel(marsPhotosRepository = marsPhotosRepository)
+        /*
+         *Android framework does not allow a ViewModel to be passed values in the constructor
+         *when created, we implement a ViewModelProvider.Factory object, which lets us get
+         *around this limitation.
+         */
+
+        /*
+         *The Factory pattern is a creational pattern used to create objects. The
+         * MarsViewModel.Factory object uses the application container to retrieve the
+         * marsPhotosRepository, and then passes this repository to the ViewModel when the
+         * ViewModel object is created.
+         */
+        companion object {
+            val Factory: ViewModelProvider.Factory = viewModelFactory {
+                /*
+                define the actual instructions for creating your ViewModel. This block gets
+                executed when the factory is asked to create a new MarsViewModel.
+                 */
+                initializer {
+                    val application = (this[APPLICATION_KEY] as MarsPhotosApplication)
+                    val marsPhotosRepository = application.container.marsPhotosRepository
+                    MarsViewModel(marsPhotosRepository = marsPhotosRepository)
+                }
             }
         }
-    }
 }
