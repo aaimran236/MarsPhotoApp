@@ -36,7 +36,8 @@ import java.io.IOException
  */
 sealed interface MarsUiState {
     ///data class Success(val photos: String) : MarsUiState
-    data class Success(val photos: MarsPhoto) : MarsUiState
+    ///data class Success(val photos: MarsPhoto) : MarsUiState
+    data class Success(val photos: List<MarsPhoto>) : MarsUiState
     object Error : MarsUiState
     object Loading : MarsUiState
 }
@@ -81,15 +82,15 @@ class MarsViewModel(private val marsPhotosRepository: MarsPhotosRepository) : Vi
                 ///val marsPhotosRepository= NetworkMarsPhotosRepository()
                 ///val listResult = marsPhotosRepository.getMarsPhotos()
 
-                ///Assign the first photo object at index 0.
+
 
 
 //                MarsUiState.Success(
 //                    "Success: ${listResult.size} Mars photos retrieved"
 //                )
 
-
-                MarsUiState.Success(marsPhotosRepository.getMarsPhotos()[0])
+                ///Assign the first photo object at index 0.
+                MarsUiState.Success(marsPhotosRepository.getMarsPhotos())
             } catch (e: IOException) {
                 MarsUiState.Error
             } catch (e: HttpException) {
