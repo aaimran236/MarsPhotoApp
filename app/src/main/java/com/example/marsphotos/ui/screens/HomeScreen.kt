@@ -32,6 +32,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -59,7 +60,7 @@ fun HomeScreen(
     when (marsUiState) {
         is MarsUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
         ///is MarsUiState.Success -> ResultScreen(marsUiState.photos, modifier = modifier.fillMaxWidth())
-        is MarsUiState.Success -> PhotosGridScreen(marsUiState.photos, modifier)
+        is MarsUiState.Success -> PhotosGridScreen(marsUiState.photos, modifier = modifier.fillMaxWidth(), contentPadding = contentPadding)
         is MarsUiState.Error -> ErrorScreen( retryAction, modifier = modifier.fillMaxSize())
     }
 }
@@ -72,6 +73,7 @@ fun HomeScreen(
     fun MarsPhotoCard(photo: MarsPhoto, modifier: Modifier = Modifier) {
         Card(
             modifier = modifier,
+            shape = MaterialTheme.shapes.medium,
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
         ) {
             AsyncImage(
@@ -83,7 +85,7 @@ fun HomeScreen(
                 contentScale = ContentScale.Crop,
                 error = painterResource(R.drawable.ic_broken_image),
                 placeholder = painterResource(R.drawable.loading_img),
-                modifier = modifier,
+                modifier = Modifier.fillMaxWidth(),
             )
         }
     }
